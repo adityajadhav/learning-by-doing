@@ -20,8 +20,21 @@ public class MainActivity extends AppCompatActivity {
         insertQuery(db);
 
     }
+	
+	private void selectQuery(SQLiteDatabase db) {
+
+        Cursor cursor = db.rawQuery("SELECT name FROM students", null);
+        if (cursor.moveToFirst()) {
+            do {
+                Log.i("SqlitePractice", cursor.getString(cursor.getColumnIndex("name")));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+    }
 
     private void insertQuery(SQLiteDatabase db) {
+		
         ContentValues universityContentValues = new ContentValues();
         String uniId = UUID.randomUUID().toString();
         universityContentValues.put(InformationReaderContract.UniversityEntry._ID, uniId);
