@@ -1,0 +1,77 @@
+<html>  
+<body>  
+<script>  
+/*
+IMPORTANT: Replace this with your Firebase Project ID.  
+If you go back to the Firebase Console, your Project ID  
+will be in the URL like...  
+https://console.firebase.google.com/project/<FIREBASE_PROJECT_ID>  
+*/
+const FIREBASE_PROJECT_ID = "easy-uri"
+
+// Add a custom error message if you'd like
+const ERROR_MESSAGE = "Unknown shortlink!"
+
+/*
+If we start with a URL like  
+var url = "https://abe.today/tiny-phone"  
+*/
+var url = document.location;
+
+/* 
+Then we load the URL's path  
+like "/tiny-phone" and split it  
+to get ["", "tiny-phone"]  
+*/
+var path = url.pathname.split("/");
+
+// Then pick out the last path chunk, in this case "tiny-phone" 
+var id = path.slice(-1)[0];
+
+/*
+We can use this ID to make a Firebase REST  
+API URL.  
+*/
+var url_parts = [  
+  'https://', 
+  FIREBASE_PROJECT_ID, 
+  '.firebaseio.com/share/', 
+  id
+];
+var request_url = url_parts.join("") + ".json";
+
+/*
+We wont actually use the Firebase JavaScript SDK  
+because it's overkill for this and will slow down  
+the redirect. We'll just make an HTTP call to the REST API.  
+*/
+var xhr = new XMLHttpRequest();
+
+/*
+Add a event handler so we can detect when the  
+data has been loaded.  
+*/
+xhr.onreadystatechange = function() {  
+    /* 
+    If the state is done, the data is loaded 
+    and it's time to redirect
+    */
+    if (xhr.readyState == XMLHttpRequest.DONE) {
+        // Parse out the URL from the JSON we get from the API
+        var redirect = JSON.parse(xhr.responseText);
+        // Then try to redirect the user!
+        if (redirect && !redirect.error) {
+          document.location = redirect;
+        } else {
+          // If it fails, throw out an error
+          document.write(ERROR_MESSAGE)
+        }
+    }
+}
+
+// Here we actually initialize the HTTP request
+xhr.open('GET', request_url, true);  
+xhr.send(null);  
+</script>  
+</body>  
+</html> 

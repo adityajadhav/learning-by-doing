@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "share": {
+    "$short_link": {
+      ".read": true,
+      ".write": "auth != null"
+    } 
+  }
+  }
+}
+
